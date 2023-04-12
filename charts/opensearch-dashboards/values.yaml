@@ -255,5 +255,3 @@ plugins:
   enabled: false
   installList: []
   # - example-fake-plugin-downloadable-url
-
-mlCommonsDashboardsEnabled: true
