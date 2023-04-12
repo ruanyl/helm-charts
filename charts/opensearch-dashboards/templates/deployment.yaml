@@ -154,18 +154,21 @@ spec:
         - containerPort: {{ .Values.service.port }}
           name: {{ .Values.service.httpPortName | default "http" }}
           protocol: TCP
-{{- if .Values.plugins.enabled }}
         command:
           - sh
           - -c
           - |
             #!/usr/bin/bash
             set -e
+            {{- if .Values.mlCommonsDashboardsEnabled }}
+            echo 'ml_commons_dashboards.enabled: true' >> config/opensearch_dashboards.yml
+            {{- end }}
+            {{- if .Values.plugins.enabled }}
             {{- range $plugin := .Values.plugins.installList }}
             ./bin/opensearch-dashboards-plugin install {{ $plugin }}
             {{- end }}
+            {{- end }}
             bash opensearch-dashboards-docker-entrypoint.sh opensearch-dashboards
-{{- end }}
 {{- if .Values.lifecycle }}
         lifecycle:
 {{ toYaml .Values.lifecycle | indent 10 }}
