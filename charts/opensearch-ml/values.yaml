@@ -1,6 +1,6 @@
 ---
 clusterName: "opensearch-cluster"
-nodeGroup: "master"
+nodeGroup: "machinelearning"
 
 # If discovery.type in the opensearch configuration is set to "single-node",
 # this should be set to "true"
@@ -14,10 +14,7 @@ masterService: "opensearch-cluster-master"
 # OpenSearch roles that will be applied to this nodeGroup
 # These will be set as environment variable "node.roles". E.g. node.roles=master,ingest,data,remote_cluster_client
 roles:
-  - master
-  - ingest
-  - data
-  - remote_cluster_client
+  - ml
 
 replicas: 2
 
