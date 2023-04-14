@@ -163,6 +163,11 @@ spec:
             {{- if .Values.mlCommonsDashboardsEnabled }}
             echo 'ml_commons_dashboards.enabled: true' >> config/opensearch_dashboards.yml
             {{- end }}
+            {{- range $path, $_ := .Files.Glob "plugins/*" }}
+            {{- $plugin := $.Files.Get $path | fromJson }}
+            ./bin/opensearch-dashboards-plugin remove {{ index $plugin "name" }}
+            ./bin/opensearch-dashboards-plugin install {{ index $plugin "url" }}
+            {{- end }}
             {{- if .Values.plugins.enabled }}
             {{- range $plugin := .Values.plugins.installList }}
             ./bin/opensearch-dashboards-plugin install {{ $plugin }}
