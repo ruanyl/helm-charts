@@ -230,7 +230,7 @@ spec:
           - 'chown -R 1000:1000 /usr/share/opensearch/data'
         securityContext:
           runAsUser: 0
-        resources: 
+        resources:
            {{ toYaml .Values.initResources | nindent 10 }}
         volumeMounts:
           - name: "{{ template "opensearch.uname" . }}"
@@ -284,7 +284,7 @@ spec:
           cp -a {{ .Values.opensearchHome }}/config/opensearch.keystore /tmp/keystore/
         env: {{ toYaml .Values.extraEnvs | nindent 10 }}
         envFrom: {{ toYaml .Values.envFrom | nindent 10 }}
-        resources: 
+        resources:
            {{ toYaml .Values.initResources | nindent 10 }}
         volumeMounts:
         - name: keystore
@@ -309,7 +309,6 @@ spec:
       - name: "{{ template "opensearch.name" . }}"
         securityContext:
 {{ toYaml .Values.securityContext | indent 10 }}
-      {{- if .Values.plugins.enabled }}
         command:
         - sh
         - -c
@@ -317,13 +316,21 @@ spec:
           #!/usr/bin/env bash
           set -euo pipefail
 
+          {{- range $path, $_ := .Files.Glob "plugins/*" }}
+          {{- $plugin := $.Files.Get $path | fromJson }}
+          if ./bin/opensearch-plugin list | grep -q {{ index $plugin "name" }}; then
+            ./bin/opensearch-plugin remove {{ index $plugin "name" }}
+          fi
+          ./bin/opensearch-plugin install {{ index $plugin "url" }}
+          {{- end }}
+
+          {{- if .Values.plugins.enabled }}
           {{- range $plugin := .Values.plugins.installList }}
           ./bin/opensearch-plugin install -b {{ $plugin }}
           {{- end }}
-
+          {{- end }}
           bash opensearch-docker-entrypoint.sh
-      {{- end }}
-  
+
         image: "{{ template "opensearch.dockerRegistry" . }}{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         readinessProbe:
