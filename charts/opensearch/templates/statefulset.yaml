@@ -316,7 +316,7 @@ spec:
           #!/usr/bin/env bash
           set -euo pipefail
 
-          {{- range $path, $_ := .Files.Glob "plugins/*" }}
+          {{- range $path, $_ := .Files.Glob "plugins/*.json" }}
           {{- $plugin := $.Files.Get $path | fromJson }}
           if ./bin/opensearch-plugin list | grep -q {{ index $plugin "name" }}; then
             ./bin/opensearch-plugin remove {{ index $plugin "name" }}
