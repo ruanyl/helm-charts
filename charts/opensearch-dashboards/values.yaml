@@ -101,7 +101,7 @@ config:
     opensearch.hosts: [https://localhost:9200]
     opensearch.ssl.verificationMode: none
     opensearch.username: kibanaserver
-    opensearch.password: <secret:/secret/app/mlplayground/opensearch-user~password>
+    opensearch.password: <secret:/secret/data/app/mlplayground/opensearch-user~password>
     opensearch.requestHeadersWhitelist: [authorization, securitytenant]
     opensearch_security.auth.anonymous_auth_enabled: true
     opensearch_security.multitenancy.enabled: false
